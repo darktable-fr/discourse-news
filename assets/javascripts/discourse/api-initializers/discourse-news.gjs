@@ -6,7 +6,7 @@ export default apiInitializer("1.0", (api) => {
     return;
   }
 
-  api.headerButtons.add("news", NewsHeaderButton, { before: "auth" });
+  api.headerIcons.add("news", NewsHeaderButton, { before: "search" });
 
   api.modifyClass(
     "model:topic",
