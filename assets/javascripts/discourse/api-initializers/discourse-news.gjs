@@ -2,7 +2,8 @@ import { apiInitializer } from "discourse/lib/api";
 import NewsHeaderButton from "../components/news-header-button";
 
 export default apiInitializer("1.0", (api) => {
-  if (!api.siteSettings.discourse_news_enabled) {
+  const siteSettings = api.container.lookup("service:site-settings");
+  if (!siteSettings.discourse_news_enabled) {
     return;
   }
 
