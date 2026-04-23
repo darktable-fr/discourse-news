@@ -1,4 +1,3 @@
-import { fn } from "@ember/helper";
 import { htmlSafe } from "@ember/template";
 import DiscoveryTopicsList from "discourse/components/discovery-topics-list";
 import List from "discourse/components/topic-list/list";
@@ -11,7 +10,7 @@ import { i18n } from "discourse-i18n";
     <DiscoveryTopicsList
       @model={{@model}}
       @incomingCount={{@controller.topicTrackingState.incomingCount}}
-      @bulkSelectHelper={{@bulkSelectHelper}}
+      @bulkSelectHelper={{@controller.bulkSelectHelper}}
     >
       {{#if @controller.hasTopics}}
         <List
@@ -19,8 +18,8 @@ import { i18n } from "discourse-i18n";
           @showTopicPostBadges={{@controller.showTopicPostBadges}}
           @showPosters={{true}}
           @canBulkSelect={{@controller.canBulkSelect}}
-          @bulkSelectHelper={{@bulkSelectHelper}}
-          @changeSort={{fn @controller.changeSort}}
+          @bulkSelectHelper={{@controller.bulkSelectHelper}}
+          @changeSort={{@controller.changeSort}}
           @hideCategory={{@model.hideCategory}}
           @order={{@controller.order}}
           @ascending={{@controller.ascending}}
