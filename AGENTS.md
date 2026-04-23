@@ -39,11 +39,16 @@ bundle exec rubocop
 
 ## Frontend conventions
 
-- Components use **Glimmer `.gjs`** (template-colocation) with `@glimmer/component`.
-- The outlet connector at `assets/javascripts/discourse/connectors/topic-list-item/news-topic-list-item.gjs` replaces the default topic list item when on the news route.
-- The main template (`templates/news.hbs`) is still legacy HBS — this is a mixed-pattern file; do not convert it without verifying Discourse version compatibility.
-- Header button is registered in the initializer via `api.headerButtons.add()`.
+- All components and templates use **Glimmer `.gjs`** (template-colocation) with `@glimmer/component`. There are no legacy `.hbs` files.
+- Route template: `templates/news.gjs` — uses `<DiscoveryTopicsList>` + `<List>` (from `discourse/components/topic-list/list`, not the deprecated `discourse/components/topic-list` shim).
+- The outlet connector at `assets/javascripts/discourse/connectors/topic-list-item/news-topic-list-item.gjs` replaces the default topic list item when on the news route; uses `@outletArgs.topic` (not `@topic`).
+- Header icon is registered in the api-initializer via `api.headerIcons.add()` (not `api.headerButtons.add()`).
+- In api-initializers, use `api.siteSettings` directly — do **not** use `api.container.lookup("service:site-settings")`.
 - Do **not** use Ember string prototype extensions (removed in recent commits).
+- Route model returns sidebar topics via `Object.assign(base, { sidebarTopics })` — do not use `controller.set()`.
+- `bulkSelectHelper` belongs to `DiscoveryListController`, referenced as `@controller.bulkSelectHelper` in templates.
+- Triple-mustache `{{{...}}}` is gone — use `{{htmlSafe (i18n ...)}}` for HTML-safe i18n strings.
+- `(action "changeSort")` is gone — use `@changeSort={{@controller.changeSort}}` (the action is already bound via `@action`).
 
 ## Backend conventions
 
@@ -70,7 +75,7 @@ bundle exec rubocop
 
 ## Discourse compatibility
 
-`.discourse-compatibility` pins commit `289c736c` for Discourse `3.1.0.beta4`. The plugin otherwise tracks modern Discourse (Glimmer components, updated share modal API, CSS custom properties for dark mode).
+`.discourse-compatibility` pins commit `289c736c` for Discourse `3.1.0.beta4`. The plugin targets modern Discourse (Glimmer components, updated share modal API, CSS custom properties for dark mode). It has been migrated to be compatible with Discourse 2026.04, removing deprecated APIs (`MultiJson`, `ActiveModel::ArraySerializer`, `api.headerButtons`, curly-syntax templates, `controller.set()`).
 
 ## Repo context
 
