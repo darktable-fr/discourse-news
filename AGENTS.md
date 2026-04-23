@@ -1,0 +1,77 @@
+# AGENTS.md — discourse-news
+
+A Discourse plugin that adds a `/news` route displaying topics in a news-article layout, with optional RSS feed source and a sidebar topic list.
+
+## Plugin structure
+
+Standard Discourse plugin layout. Entry point is `plugin.rb`.
+
+```
+plugin.rb                        # Asset registration, gating on enabled setting, monkey-patches
+app/serializers/news/            # ActiveModel serializers (RSS items)
+assets/javascripts/discourse/    # Frontend: components, connectors, controllers, routes, templates
+assets/stylesheets/              # common/ and mobile/ SCSS
+config/routes.rb                 # GET /news => list#news
+config/settings.yml              # 11 site settings (see below)
+lib/news/                        # Ruby backend: RSS fetching, item HTML processing, engine
+spec/                            # RSpec unit + system (browser) tests
+```
+
+## Running tests
+
+This plugin runs inside a full Discourse checkout — it cannot be tested standalone. Tests run through Discourse's CI infrastructure.
+
+CI is handled entirely by the shared reusable workflow in `.github/workflows/discourse-plugin.yml`, which delegates to `discourse/.github/.github/workflows/discourse-plugin.yml@v1`. That shared workflow runs:
+- Ruby linting (RuboCop)
+- JavaScript linting (ESLint)
+- RSpec unit tests
+- System (browser/Capybara) tests
+
+There is no local `Makefile`, `Rakefile`, or task runner script.
+
+## Linting
+
+Ruby: `rubocop` via `rubocop-discourse` (inherits `stree-compat.yml`).
+
+```sh
+bundle exec rubocop
+```
+
+## Frontend conventions
+
+- Components use **Glimmer `.gjs`** (template-colocation) with `@glimmer/component`.
+- The outlet connector at `assets/javascripts/discourse/connectors/topic-list-item/news-topic-list-item.gjs` replaces the default topic list item when on the news route.
+- The main template (`templates/news.hbs`) is still legacy HBS — this is a mixed-pattern file; do not convert it without verifying Discourse version compatibility.
+- Header button is registered in the initializer via `api.headerButtons.add()`.
+- Do **not** use Ember string prototype extensions (removed in recent commits).
+
+## Backend conventions
+
+- `News::Rss` fetches via `Excon`, parses with `RSS::Parser`, caches in `Discourse.cache` with a 5-minute TTL.
+- `News::Item` uses `Nokogiri::HTML5` to strip featured images, lightbox wrappers, and empty `<p>` tags from post bodies.
+- `ListController` is monkey-patched to skip `ensure_logged_in` for `/news` (unauthenticated access is intentional).
+- `plugin.rb` adds `list_controller#news`, `topic_query#list_news`, and `topic#news_body` as computed attributes; `news_body` is serialized on `topic_list_item` conditionally.
+
+## Site settings (config/settings.yml)
+
+| Setting | Type | Default | Notes |
+|---|---|---|---|
+| `discourse_news_enabled` | bool | `false` | Master switch; plugin is gated on this |
+| `discourse_news_source` | enum | `"category"` | `category` or `rss` |
+| `discourse_news_category` | category_list | `''` | Categories for news topics |
+| `discourse_news_rss` | string | `''` | RSS feed URL (server-side only) |
+| `discourse_news_icon` | string | `''` | FA icon or image URL for header nav button |
+| `discourse_news_title_below_image` | bool | `false` | Layout option |
+| `discourse_news_show_reply_count` | bool | `false` | Category source only |
+| `discourse_news_sort` | enum | `"bumped_at"` | `bumped_at` or `created_at` (server-side only) |
+| `discourse_news_sidebar_topic_list` | bool | `true` | Show sidebar |
+| `discourse_news_sidebar_topic_list_filter` | string | `"latest"` | Sidebar filter |
+| `discourse_news_sidebar_topic_list_limit` | int | `10` | Sidebar count |
+
+## Discourse compatibility
+
+`.discourse-compatibility` pins commit `289c736c` for Discourse `3.1.0.beta4`. The plugin otherwise tracks modern Discourse (Glimmer components, updated share modal API, CSS custom properties for dark mode).
+
+## Repo context
+
+Fork of `paviliondev/discourse-news`, maintained at `darktable-fr/discourse-news`. Branch `main` is the active branch.
