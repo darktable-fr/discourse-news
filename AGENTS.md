@@ -43,7 +43,7 @@ bundle exec rubocop
 - Route template: `templates/news.gjs` — uses `<DiscoveryTopicsList>` + `<List>` (from `discourse/components/topic-list/list`, not the deprecated `discourse/components/topic-list` shim).
 - The outlet connector at `assets/javascripts/discourse/connectors/topic-list-item/news-topic-list-item.gjs` replaces the default topic list item when on the news route; uses `@outletArgs.topic` (not `@topic`).
 - Header icon is registered in the api-initializer via `api.headerIcons.add()` (not `api.headerButtons.add()`).
-- In api-initializers, use `api.siteSettings` directly — do **not** use `api.container.lookup("service:site-settings")`.
+- In api-initializers, `api.siteSettings` does **not** exist — use `api.container.lookup("service:site-settings")` to access site settings. In Glimmer components and services, use `@service siteSettings` instead.
 - Do **not** use Ember string prototype extensions (removed in recent commits).
 - Route model returns sidebar topics via `Object.assign(base, { sidebarTopics })` — do not use `controller.set()`.
 - `bulkSelectHelper` belongs to `DiscoveryListController`, referenced as `@controller.bulkSelectHelper` in templates.
