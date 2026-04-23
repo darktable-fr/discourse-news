@@ -25,6 +25,8 @@ export default class NewsTopicListItem extends Component {
         @topic={{@outletArgs.topic}}
         @showReplies={{this.showReplies}}
       />
+    {{else}}
+      {{yield}}
     {{/if}}
   </template>
 }
