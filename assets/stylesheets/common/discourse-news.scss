@@ -186,25 +186,26 @@ body.news #list-area {
   }
 }
 
-// === Tablet (768px – 1024px) ===
+// === Tablet and below (≤ 1024px) ===
+// Discourse loads a separate mobile stylesheet by user-agent for phones;
+// this breakpoint handles tablets and browsers resized below 1024px.
 @media screen and (max-width: 1024px) {
   body.news #list-area {
     flex-direction: column;
 
     .topic-list-contents {
       width: 100%;
-      max-width: 100%;
     }
 
     .sidebar {
       display: none;
     }
-  }
 
-  body.news #list-area .contents .topic-list tbody {
-    .news-item .news-item-title a {
-      font-size: 28px;
-      line-height: 36px;
+    .contents .topic-list tbody {
+      .news-item .news-item-title a {
+        font-size: 28px;
+        line-height: 36px;
+      }
     }
   }
 }
