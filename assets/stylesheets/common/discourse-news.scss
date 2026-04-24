@@ -126,6 +126,12 @@ body.news #list-area {
           .news-item-body {
             max-height: initial;
             color: var(--primary);
+
+            // Prevent inline images in post body from overflowing on narrow screens
+            img {
+              max-width: 100%;
+              height: auto;
+            }
           }
 
           .news-item-gutter {
