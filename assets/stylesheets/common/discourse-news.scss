@@ -37,7 +37,7 @@ body.news #main-outlet {
 body.news #list-area {
   display: flex;
   min-width: 0;
-  overflow-x: hidden;
+  overflow-x: hidden; // belt-and-suspenders: prevent horizontal scroll if child content overflows
   
   > span {
     display: none;
