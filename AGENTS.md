@@ -80,3 +80,20 @@ bundle exec rubocop
 ## Repo context
 
 Fork of `paviliondev/discourse-news`, maintained at `darktable-fr/discourse-news`. Branch `main` is the active branch.
+
+## Work performed
+
+### Responsive layout fixes (2026-04-24)
+
+Fixed horizontal scroll and layout issues across viewports in `/news` route.
+
+- Desktop (≥1025px): flex layout, article column 750px max, sidebar visible
+- Tablet (≤1024px): sidebar hidden, column 100%, title 28px
+- Mobile: full column, title 22px, thumbnails full width ratio-preserved
+
+**CSS changes:**
+- Removed fixed `width: 750px`, use `max-width: 100%` + `min-width: 0` + `overflow-x: hidden`
+- Added `@media (max-width: 1024px)` hiding sidebar and forcing column layout
+- Rewrote mobile SCSS: removed `!important`, set `height: auto` for thumbnails
+- Added `.news-item-body img { max-width: 100%; height: auto }` to constrain inline images
+- Removed `object-fit: cover` from thumbnail img rules (no-op without explicit height)
